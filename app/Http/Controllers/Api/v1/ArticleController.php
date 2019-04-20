@@ -7,9 +7,9 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Article;
-use App\Http\Controllers\Api\Services\article\ArticleCreateService as CreateService;
-use App\Http\Controllers\Api\Services\article\ArticleUpdateService as UpdateService;
-use App\Http\Controllers\Api\Services\DeleteService;
+use App\Http\Services\Api\article\ArticleCreateService as CreateService;
+use App\Http\Services\Api\article\ArticleUpdateService as UpdateService;
+use App\Http\Services\Api\DeleteService;
 use Auth;
 use Exception;
 use Illuminate\Http\JsonResponse;

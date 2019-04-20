@@ -4,7 +4,7 @@
  * See LICENSE.txt for license details.
  */
 
-namespace App\Http\Controllers\Api\Services\comment;
+namespace App\Http\Services\Api\comment;
 
 use App\Comment;
 use Illuminate\Support\Facades\Validator;

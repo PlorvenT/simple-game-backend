@@ -4,7 +4,7 @@
  * See LICENSE.txt for license details.
  */
 
-namespace App\Http\Controllers\Api\Middleware;
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

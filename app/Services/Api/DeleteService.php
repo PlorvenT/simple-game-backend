@@ -4,7 +4,7 @@
  * See LICENSE.txt for license details.
  */
 
-namespace App\Http\Controllers\Api\Services;
+namespace App\Http\Services\Api;
 
 use Illuminate\Database\Eloquent\Model;
 

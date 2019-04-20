@@ -13,9 +13,9 @@ use Auth;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Api\Services\comment\CommentUpdateService as UpdateService;
-use App\Http\Controllers\Api\Services\comment\CommentCreateService as CreateService;
-use App\Http\Controllers\Api\Services\DeleteService;
+use App\Http\Services\Api\comment\CommentUpdateService as UpdateService;
+use App\Http\Services\Api\comment\CommentCreateService as CreateService;
+use App\Http\Services\Api\DeleteService;
 
 /**
  * Class CommentController

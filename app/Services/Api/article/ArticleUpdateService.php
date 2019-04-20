@@ -4,7 +4,7 @@
  * See LICENSE.txt for license details.
  */
 
-namespace App\Http\Controllers\Api\Services\article;
+namespace App\Http\Services\Api\article;
 
 use App\Article;
 
