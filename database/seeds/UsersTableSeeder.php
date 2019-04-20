@@ -4,6 +4,7 @@
  * See LICENSE.txt for license details.
  */
 
+use App\Article;
 use App\User;
 use Illuminate\Database\Seeder;
 
@@ -19,8 +20,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        // Let's clear the users table first
-        User::truncate();
+        User::query()->delete();
 
         $faker = \Faker\Factory::create();
 
@@ -30,6 +30,7 @@ class UsersTableSeeder extends Seeder
         $password = Hash::make('qwerty');
 
         User::create([
+            'id' => 1,
             'name' => 'Administrator',
             'email' => 'admin@test.com',
             'password' => $password,
