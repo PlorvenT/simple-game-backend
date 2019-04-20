@@ -51,6 +51,14 @@ class User extends Authenticatable
         return $this->hasMany(Article::class);
     }
 
+    /**
+     * @return HasMany|Comment[]
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function generateToken()
     {
         $this->api_token = Str::random(60);

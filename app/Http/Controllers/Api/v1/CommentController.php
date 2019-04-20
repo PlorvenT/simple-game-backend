@@ -7,27 +7,28 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Article;
-use App\Http\Controllers\Api\Services\article\ArticleCreateService as CreateService;
-use App\Http\Controllers\Api\Services\article\ArticleUpdateService as UpdateService;
-use App\Http\Controllers\Api\Services\DeleteService;
+use App\Comment;
+use App\Http\Controllers\Controller;
 use Auth;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\Services\comment\CommentUpdateService as UpdateService;
+use App\Http\Controllers\Api\Services\comment\CommentCreateService as CreateService;
+use App\Http\Controllers\Api\Services\DeleteService;
 
 /**
- * Class ArticleController
- * @package App\Http\Controllers
+ * Class CommentController
+ * @package App\Http\Controllers\Api\v1
  */
-class ArticleController extends Controller
+class CommentController extends Controller
 {
     /**
      * @return JsonResponse
      */
     public function index()
     {
-        $articles = Article::where('user_id', Auth::user()->id)->get();
+        $articles = Comment::where('user_id', Auth::user()->id)->get();
 
         return response()->json([
             'code' => 200,
@@ -37,15 +38,15 @@ class ArticleController extends Controller
     }
 
     /**
-     * @param Article $article
+     * @param Comment $comment
      * @return JsonResponse
      */
-    public function show(Article $article)
+    public function show(Comment $comment)
     {
         return response()->json([
             'code' => 200,
             'status' => 'success',
-            'model' => $article->load('comments'),
+            'model' => $comment,
         ], 200);
     }
 
@@ -70,30 +71,30 @@ class ArticleController extends Controller
 
     /**
      * @param Request $request
-     * @param Article $article
+     * @param Comment $comment
      * @param UpdateService $updateService
      * @return JsonResponse
      */
-    public function update(Request $request, Article $article, UpdateService $updateService)
+    public function update(Request $request, Comment $comment, UpdateService $updateService)
     {
-        $article = $updateService->run($article, $request->all());
+        $comment = $updateService->run($comment, $request->all());
 
         return response()->json([
             'code' => 200,
             'status' => 'success',
-            'model' => $article,
+            'model' => $comment,
         ], 200);
     }
 
     /**
-     * @param Article $article
+     * @param Comment $comment
      * @param DeleteService $deleteService
      * @return JsonResponse
      * @throws Exception
      */
-    public function delete(Article $article, DeleteService $deleteService)
+    public function delete(Comment $comment, DeleteService $deleteService)
     {
-        $deleteService->run($article);
+        $deleteService->run($comment);
 
         return response()->json([
             'code' => 200,

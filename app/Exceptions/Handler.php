@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
@@ -49,13 +50,22 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        // This will replace our 404 response with
-        // a JSON response.
         if (($exception instanceof NotFoundHttpException || $exception instanceof ModelNotFoundException) &&
             $request->isJson()) {
             return response()->json([
-                'error' => 'Resource not found'
+                'code' => 404,
+                'status' => 'error',
+                'message' => 'Not found.',
             ], 404);
+        }
+
+        if (($exception instanceof ThrottleRequestsException) &&
+            $request->isJson()) {
+            return response()->json([
+                'code' => $exception->getStatusCode(),
+                'status' => 'error',
+                'message' => $exception->getMessage(),
+            ], $exception->getStatusCode());
         }
 
         return parent::render($request, $exception);

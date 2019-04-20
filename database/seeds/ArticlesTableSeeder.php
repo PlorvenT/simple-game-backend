@@ -23,7 +23,7 @@ class ArticlesTableSeeder extends Seeder
             Article::create([
                 'user_id' => 1,
                 'title' => $faker->name,
-                'body' => $faker->email,
+                'body' => $faker->sentence(4, 4),
             ]);
         }
     }

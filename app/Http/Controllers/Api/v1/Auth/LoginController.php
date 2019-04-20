@@ -6,31 +6,16 @@
 
 namespace App\Http\Controllers\Api\v1\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Http\Controllers\common\Auth\LoginController as BaseLoginController;
 
-class LoginController extends Controller
+class LoginController extends BaseLoginController
 {
-    use AuthenticatesUsers;
-
     /**
-     * Where to redirect users after login.
-     *
-     * @var string
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
      */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest')->except('logout');
-    }
-
     public function login(Request $request)
     {
         $this->validateLogin($request);
@@ -47,7 +32,5 @@ class LoginController extends Controller
                 'message' => 'Wrong email or password',
             ], 401);
         }
-
-        return $this->sendFailedLoginResponse($request);
     }
 }
