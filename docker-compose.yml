@@ -1,56 +1,43 @@
 version: '3'
 services:
 
-  #PHP Service
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: digitalocean.com/php:7.3
-    container_name: app
-    restart: unless-stopped
-    tty: true
-    volumes:
-      - ./:/var/www
-      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
-    working_dir: /var/www
-    networks:
-      - app-network
-
-  #Nginx Service
-  webserver:
-    image: nginx:alpine
-    container_name: webserver
-    restart: unless-stopped
-    tty: true
+  web-php:
+    image: hub.ci.gbksoft.net:5000/pub/php-apache:7.1
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - .:/var/www/html
+      - ./docker/apache2/php7.1/sites-available:/etc/apache2/sites-available
+      - ./docker/apache2/php7.1/etc/cmd/entrypoint.sh:/entrypoint.sh
+      - ./docker/apache2/php7.1/etc/ssl:/etc/apache2/ssl
+    working_dir: /var/www/html
+    environment:
+      # Custom user ID and group ID to start
+      # Get auto if not set
+      DCUID: ${DCUID}
+      DCGID: ${DCGID}
+      MAIN_DOMAIN: ${MAIN_DOMAIN}
+      REST_DOMAIN: ${REST_DOMAIN}
+      BACKEND_DOMAIN: ${BACKEND_DOMAIN}
+      GITHUB_KEY: ${GITHUB_KEY}
     networks:
       - app-network
-    volumes:
-      - ./:/var/www
-      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
 
   #MySQL Service
   db:
-    image: mysql:5.7.22
-    container_name: db
-    restart: unless-stopped
-    tty: true
+    image: mysql:5.7
     ports:
-      - "3306:3306"
+      - "${DB_PORT}:3306"
     volumes:
-      - dbdata:/var/lib/mysql
-      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+      - ./docker/mysql/5.7/data:/var/lib/mysql
     environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    command: "mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"
     networks:
       - app-network
 

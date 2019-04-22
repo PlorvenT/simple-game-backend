@@ -35,6 +35,9 @@ build_vendor:
   script:
     - echo "===== Install dependencies ====="
     - chmod +x ./composer-install.sh && ./composer-install.sh
+    - echo "===== All services ====="
+    - cat /etc/hosts | grep '10.1.' | awk '{print $1" "$2;}'
+    - ./vendor/bin/envoy run deploy:prod
   when: always
   only:
     - web
