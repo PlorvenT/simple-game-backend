@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: digitalocean.com/php
+    image: digitalocean.com/php:7.3
     container_name: app
     restart: unless-stopped
     tty: true

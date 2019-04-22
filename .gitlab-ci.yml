@@ -1,0 +1,42 @@
+variables:
+  MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+  MYSQL_ROOT_HOST: "%"
+  MYSQL_DATABASE: ${DB_DATABASE}
+  MYSQL_USER: ${DB_USERNAME}
+  MYSQL_PASSWORD: ${DB_PASSWORD}
+  DB_USERNAME: ${DB_USERNAME}
+  DB_PASSWORD: ${DB_PASSWORD}
+  DB_NAME: ${DB_DATABASE}
+  DB_PORT: ${DB_PORT}
+  DB_HOST: ${DB_HOST}
+  DB_TEST_HOST: ${DB_HOST}
+
+before_script:
+  - rm -fr /var/www/html
+
+stages:
+  - build
+
+build_vendor:
+  stage: build
+  image:
+    name: digitalocean.com/php:7.3
+    entrypoint: [""]
+  artifacts:
+    untracked: true
+    paths:
+      - vendor/
+    when: on_success
+    expire_in: 2h
+  cache:
+    key: vendors-lib
+    paths:
+      - vendor/
+  script:
+    - echo "===== Install dependencies ====="
+    - chmod +x ./composer-install.sh && ./composer-install.sh
+  when: always
+  only:
+    - web
+  tags:
+    - shared-cli
