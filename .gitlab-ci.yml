@@ -20,7 +20,7 @@ stages:
 build_vendor:
   stage: build
   image:
-    name: digitalocean.com/php:7.3
+    name: hub.ci.gbksoft.net:5000/pub/php-apache:7.1
     entrypoint: [""]
   artifacts:
     untracked: true
