@@ -21,6 +21,14 @@
     php artisan key:generate
 @endtask
 
+@task('config:cache', ['on' => 'web'])
+    php artisan config:cache
+@endtask
+
+@task('generate:key', ['on' => 'web'])
+    php artisan key:generate
+@endtask
+
 @task('symlink', ['on' => 'web'])
     chmod -R 777 {{$sourcePath}}/public
     chmod -R 777 {{$sourcePath}}/bootstrap/cache
@@ -33,6 +41,8 @@
 @endtask
 
 @macro('gitlab:deploy')
+    config:cache
     migration
+    generate:key
     symlink
 @endmacro

@@ -63,6 +63,7 @@ live:review:
     - echo "===== All services ====="
     - cat /etc/hosts | grep '10.1.' | awk '{print $1" "$2;}'
     - composer install --no-interaction --optimize-autoloader --no-progress --no-dev
+    - cp .env.example .env
     - ./vendor/bin/envoy run gitlab:deploy
     - apache2-foreground
   only:
