@@ -16,9 +16,7 @@
 @servers(['web' => $server])
 
 @task('migration', ['on' => 'web'])
-    php artisan config:cache
     php artisan migrate
-    php artisan key:generate
 @endtask
 
 @task('config:cache', ['on' => 'web'])
@@ -41,8 +39,8 @@
 @endtask
 
 @macro('gitlab:deploy')
-    config:cache
     migration
     generate:key
+    config:cache
     symlink
 @endmacro
