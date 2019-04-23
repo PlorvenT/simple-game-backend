@@ -46,6 +46,9 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        var_dump($exception->getTraceAsString());
+        var_dump($exception->getMessage());
+        die();
         // custom error message
         if ($exception instanceof \ErrorException) {
             var_dump($exception->getTrace());
