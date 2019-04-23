@@ -18,6 +18,7 @@
 @task('migration', ['on' => 'web'])
     php artisan config:cache
     php artisan migrate
+    php artisan key:generate
 @endtask
 
 @task('symlink', ['on' => 'web'])
