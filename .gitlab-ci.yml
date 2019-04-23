@@ -54,11 +54,11 @@ live:review:
       command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
   variables:
     PROXY_build_DOMAIN: live-${MAIN_DOMAIN}
-    YII_MAIN_DOMAIN: live-${MAIN_DOMAIN}
-    YII_REST_DOMAIN: live-${MAIN_DOMAIN}
-    YII_BACKEND_DOMAIN: live-${MAIN_DOMAIN}
+    MAIN_DOMAIN: live-${MAIN_DOMAIN}
+    REST_DOMAIN: live-${MAIN_DOMAIN}
+    BACKEND_DOMAIN: live-${MAIN_DOMAIN}
     BUILD_URL: https://live-$MAIN_DOMAIN
-    YII_BUILD_ENV: Live
+    BUILD_ENV: Live
   script:
     - echo "===== All services ====="
     - cat /etc/hosts | grep '10.1.' | awk '{print $1" "$2;}'
@@ -66,6 +66,7 @@ live:review:
     - cp .env.example .env
     - php artisan key:generate
     - ./vendor/bin/envoy run gitlab:deploy
+    - echo "Site url ${BUILD_URL}"
     - apache2-foreground
   only:
     - master
