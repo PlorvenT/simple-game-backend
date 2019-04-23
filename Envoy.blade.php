@@ -7,13 +7,25 @@
         echo $e->getMessage();
     }
 
+    $sourcePath= __DIR__ . "/public/index.php";
+    $distPath = '/var/www/html/index.php';
     $server = getenv('DEPLOY_SERVER');
 @endsetup
 
 @servers(['web' => $server])
 
-@task('deploy:prod', ['on' => 'web'])
-    echo $server
+@task('migration', ['on' => 'web'])
     php artisan config:cache
     php artisan migrate
 @endtask
+
+@task('symlink', ['on' => 'web'])
+    echo 'Creating symlink';
+    ln -s {{$sourcePath}} {{$distPath}}
+    echo "Symlink created from {{$sourcePath}} to {{$distPath}}"
+@endtask
+
+@macro('gitlab:deploy')
+    migration
+    symlink
+@endmacro
