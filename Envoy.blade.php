@@ -21,14 +21,15 @@
 @endtask
 
 @task('symlink', ['on' => 'web'])
+    chmod -R 777 {{$sourcePath}}/public
+    chmod -R 777 {{$sourcePath}}/bootstrap/cache
+    chmod -R 777 {{$sourcePath}}/storage
+    chmod -R 777 {{$sourcePath}}/storage/framework/
+
     echo 'Creating symlink';
 
     ln -s {{$indexSourcePath}} {{$distPath}}
     echo "Symlink created from {{$indexSourcePath}} to {{$distPath}}"
-
-    chown -R www-data:www-data {{$sourcePath}}/public
-    chown -R www-data:www-data {{$sourcePath}}/bootstrap/cache
-    chown -R www-data:www-data {{$sourcePath}}/storage
 @endtask
 
 @macro('gitlab:deploy')
