@@ -24,7 +24,6 @@
     chmod -R 777 {{$sourcePath}}/public
     chmod -R 777 {{$sourcePath}}/bootstrap/cache
     chmod -R 777 {{$sourcePath}}/storage
-    chmod -R 777 {{$sourcePath}}/storage/framework/
 
     echo 'Creating symlink';
 
