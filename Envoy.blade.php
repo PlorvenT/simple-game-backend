@@ -8,7 +8,7 @@
     }
 
     $sourcePath = __DIR__;
-    $indexSourcePath = $sourcePath . "/public/index.php";
+    $indexSourcePath = $sourcePath . "/public/";
     $distPath = '/var/www/html';
     $server = getenv('DEPLOY_SERVER');
 @endsetup
@@ -23,16 +23,8 @@
 @task('symlink', ['on' => 'web'])
     echo 'Creating symlink';
 
-    if [ ! -d {{$distPath}} ]; then
-        mkdir {{$distPath}}
-        chown -R www-data:www-data {{$distPath}}
-        echo "{{$distPath}} Created"
-    fi
-
-    if [ ! -f {{$distPath}}/index.php ]; then
-        ln -s {{$indexSourcePath}} {{$distPath}}/index.php
-        echo "Symlink created from {{$indexSourcePath}} to {{$distPath}}/index.php"
-    fi
+    ln -s {{$indexSourcePath}} {{$distPath}}
+    echo "Symlink created from {{$indexSourcePath}} to {{$distPath}}"
 
     chown -R www-data:www-data {{$sourcePath}}/public
     chown -R www-data:www-data {{$sourcePath}}/bootstrap/cache
