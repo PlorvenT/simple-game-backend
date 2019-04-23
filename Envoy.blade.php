@@ -8,7 +8,7 @@
     }
 
     $sourcePath= __DIR__ . "/public/index.php";
-    $distPath = '/var/www/html/index.php';
+    $distPath = '/var/www/html';
     $server = getenv('DEPLOY_SERVER');
 @endsetup
 
@@ -21,8 +21,17 @@
 
 @task('symlink', ['on' => 'web'])
     echo 'Creating symlink';
-    ln -s {{$sourcePath}} {{$distPath}}
-    echo "Symlink created from {{$sourcePath}} to {{$distPath}}"
+
+    if [ ! -d {{$distPath}} ]; then
+        mkdir {{$distPath}}
+        chown -R www-data:www-data {{$distPath}}/*
+        echo "{{$distPath}} Created"
+    fi
+
+    if [ ! -f {{$distPath}}/index.php ]; then
+        ln -s {{$sourcePath}} {{$distPath}}/index.php
+        echo "Symlink created from {{$sourcePath}} to {{$distPath}}/index.php"
+    fi
 @endtask
 
 @macro('gitlab:deploy')
