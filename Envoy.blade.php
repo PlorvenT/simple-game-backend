@@ -23,24 +23,22 @@
     php artisan config:cache
 @endtask
 
-@task('generate:key', ['on' => 'web'])
-    php artisan key:generate
-@endtask
-
 @task('symlink', ['on' => 'web'])
-    chmod -R 777 {{$sourcePath}}/public
-    chmod -R 777 {{$sourcePath}}/bootstrap/cache
-    chmod -R 777 {{$sourcePath}}/storage
-
     echo 'Creating symlink';
 
     ln -s {{$indexSourcePath}} {{$distPath}}
     echo "Symlink created from {{$indexSourcePath}} to {{$distPath}}"
 @endtask
 
+@task('permission', ['on' => 'web'])
+    chmod -R 777 {{$sourcePath}}/public
+    chmod -R 777 {{$sourcePath}}/bootstrap/cache
+    chmod -R 777 {{$sourcePath}}/storage
+@endtask
+
 @macro('gitlab:deploy')
     migration
-    generate:key
     config:cache
+    permission
     symlink
 @endmacro
