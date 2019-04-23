@@ -1,0 +1,76 @@
+variables:
+  MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+  MYSQL_ROOT_HOST: "%"
+  MYSQL_DATABASE: ${DB_DATABASE}
+  MYSQL_USER: ${DB_USERNAME}
+  MYSQL_PASSWORD: ${DB_PASSWORD}
+  DB_USERNAME: ${DB_USERNAME}
+  DB_PASSWORD: ${DB_PASSWORD}
+  DB_NAME: ${DB_DATABASE}
+  DB_PORT: ${DB_PORT}
+  DB_HOST: ${DB_HOST}
+  DB_TEST_HOST: ${DB_HOST}
+
+before_script:
+  - rm -fr /var/www/html
+
+stages:
+  - build
+  - live
+
+build_vendor:
+  stage: build
+  image:
+    name: hub.ci.gbksoft.net:5000/pub/php-apache:7.1
+    entrypoint: [""]
+  artifacts:
+    untracked: true
+    paths:
+      - vendor/
+    when: on_success
+    expire_in: 2h
+  cache:
+    key: vendors-lib
+    paths:
+      - vendor/
+  script:
+    - echo "===== Install dependencies ====="
+    - chmod +x ./composer-install.sh && ./composer-install.sh
+  when: always
+  only:
+    - web
+  tags:
+    - shared-cli
+
+live:review:
+  stage: live
+  when: manual
+  image:
+    name: hub.ci.gbksoft.net:5000/pub/php-apache:7.1
+    entrypoint: [""]
+  services:
+    - name: mysql:5.7
+      alias: mysql
+      command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+  variables:
+    PROXY_build_DOMAIN: live-${MAIN_DOMAIN}
+    YII_MAIN_DOMAIN: live-${MAIN_DOMAIN}
+    YII_REST_DOMAIN: live-${MAIN_DOMAIN}
+    YII_BACKEND_DOMAIN: live-${MAIN_DOMAIN}
+    BUILD_URL: https://live-$MAIN_DOMAIN
+    YII_BUILD_ENV: Live
+  script:
+    - echo "===== All services ====="
+    - cat /etc/hosts | grep '10.1.' | awk '{print $1" "$2;}'
+    - composer install --no-interaction --optimize-autoloader --no-progress --no-dev
+    - cp .env.example .env
+    - php artisan key:generate
+    - ./vendor/bin/envoy run gitlab:deploy
+    - apache2-foreground
+  only:
+    - master
+  environment:
+    name: live-review/$CI_PROJECT_PATH_SLUG
+    url: $BUILD_URL
+  tags:
+    - shared-web
