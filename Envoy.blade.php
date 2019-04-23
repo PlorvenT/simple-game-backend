@@ -24,7 +24,7 @@
 
     if [ ! -d {{$distPath}} ]; then
         mkdir {{$distPath}}
-        chown -R www-data:www-data {{$distPath}}/*
+        chown -R www-data:www-data {{$distPath}}
         echo "{{$distPath}} Created"
     fi
 
