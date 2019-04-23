@@ -7,7 +7,8 @@
         echo $e->getMessage();
     }
 
-    $sourcePath= __DIR__ . "/public/index.php";
+    $sourcePath = __DIR__;
+    $indexSourcePath = $sourcePath . "/public/index.php";
     $distPath = '/var/www/html';
     $server = getenv('DEPLOY_SERVER');
 @endsetup
@@ -29,9 +30,13 @@
     fi
 
     if [ ! -f {{$distPath}}/index.php ]; then
-        ln -s {{$sourcePath}} {{$distPath}}/index.php
-        echo "Symlink created from {{$sourcePath}} to {{$distPath}}/index.php"
+        ln -s {{$indexSourcePath}} {{$distPath}}/index.php
+        echo "Symlink created from {{$indexSourcePath}} to {{$distPath}}/index.php"
     fi
+
+    chown -R www-data:www-data {{$sourcePath}}/public
+    chown -R www-data:www-data {{$sourcePath}}/bootstrap/cache
+    chown -R www-data:www-data {{$sourcePath}}/storage
 @endtask
 
 @macro('gitlab:deploy')
