@@ -37,8 +37,8 @@
 @endtask
 
 @macro('gitlab:deploy')
-    migration
     config:cache
+    migration
     permission
     symlink
 @endmacro
