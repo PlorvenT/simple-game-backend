@@ -16,7 +16,7 @@
 @servers(['web' => $server])
 
 @task('migration', ['on' => 'web'])
-    php artisan migrate
+    php artisan migrate --force
 @endtask
 
 @task('config:cache', ['on' => 'web'])
