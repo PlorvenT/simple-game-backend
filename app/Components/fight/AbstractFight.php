@@ -82,6 +82,11 @@ abstract class AbstractFight implements FightInterface
         return $this;
     }
 
+    /**
+     * This method do simple debug.
+     *
+     * @param $msg
+     */
     private function debug($msg)
     {
         if (!$this->debugMode){
@@ -92,6 +97,11 @@ abstract class AbstractFight implements FightInterface
         echo $timeInfo . $msg . PHP_EOL;
     }
 
+    /**
+     * This method processing fight and calculates who win.
+     *
+     * @return FightInterface
+     */
     public function process(): FightInterface
     {
         $currentHeroHp = $this->hero->current_heatpoint;
