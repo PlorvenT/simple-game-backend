@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Hero;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,7 +10,12 @@ use Illuminate\Support\Str;
 
 /**
  * Class User
+ *
+ * @property integer $id
  * @property string $api_token
+ * @property string $gold_balance
+ *
+ * @mixin \Eloquent
  * @package App
  */
 class User extends Authenticatable
@@ -52,6 +58,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany|Hero[]
+     */
+    public function heroes()
+    {
+        return $this->hasMany(Hero::class);
+    }
+
+    /**
      * @return HasMany|Comment[]
      */
     public function comments()
@@ -65,5 +79,15 @@ class User extends Authenticatable
         $this->save();
 
         return $this->api_token;
+    }
+
+    public function updateBalance(int $gold): bool
+    {
+        if ($gold <= 0) {
+            return false;
+        }
+
+        $this->gold_balance += $gold;
+        return $this->save();
     }
 }
