@@ -10,7 +10,7 @@ namespace App\Components\fight;
 use App\Components\experience\ExperienceUpdater;
 use App\Models\Fight;
 use App\Models\FightLogs;
-use App\Components\awards\AwardFactory as AwardFactoryInterface;
+use App\Components\awards\AwardFactoryInterface;
 
 /**
  * Class FightProcessor
@@ -34,12 +34,19 @@ class FightProcessor
     private $fight;
 
     /**
+     * @var AwardFactoryInterface
+     */
+    private $awardService;
+
+    /**
      * FightProcessor constructor.
      * @param Fight $fight
+     * @param AwardFactoryInterface $awardService
      */
-    public function __construct(Fight $fight)
+    public function __construct(Fight $fight, AwardFactoryInterface $awardService)
     {
         $this->fight = $fight;
+        $this->awardService = $awardService;
     }
 
     /**
@@ -49,7 +56,7 @@ class FightProcessor
     {
         $this->runFight();
 
-        $this->processAwards(AwardFactory::make($this->fight));
+        $this->processAwards();
 
         $this->updateHero();
         $this->updateUser();
@@ -148,12 +155,12 @@ class FightProcessor
 
     /**
      * This methods calculates and sets awards.
-     *
-     * @param AwardFactoryInterface $awardCalculator
      */
-    private function processAwards(AwardFactoryInterface $awardCalculator)
+    private function processAwards()
     {
-        $this->fight->gold_award = $awardCalculator->makeGoldCalculator()->calculate();
-        $this->fight->experience_award = $awardCalculator->makeExperienceCalculator()->calculate();
+        $awardService = $this->awardService;
+
+        $this->fight->gold_award = $awardService->makeGoldCalculator()->calculate();
+        $this->fight->experience_award = $awardService->makeExperienceCalculator()->calculate();
     }
 }

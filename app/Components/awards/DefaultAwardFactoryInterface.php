@@ -14,7 +14,7 @@ use App\Components\awards\gold\GoldCalculator;
 use App\Components\awards\gold\GoldCalculatorInterface;
 use App\Models\Fight;
 
-class DefaultAwardFactory implements AwardFactory
+class DefaultAwardFactoryInterface implements AwardFactoryInterface
 {
     /**
      * @var Fight

@@ -15,7 +15,7 @@ use App\Models\Fight;
  * Interface AwardFactory
  * @package App\Components\awards
  */
-interface AwardFactory
+interface AwardFactoryInterface
 {
     public function __construct(Fight $fight);
 

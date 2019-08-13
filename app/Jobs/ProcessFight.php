@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Components\fight\AwardFactory;
 use App\Components\fight\FightProcessor;
 use App\Models\Fight;
 use Illuminate\Bus\Queueable;
@@ -46,7 +47,8 @@ class ProcessFight implements ShouldQueue
      */
     public function handle()
     {
-        $fightProcessor = new FightProcessor($this->fight);
+        $awardService = AwardFactory::make($this->fight);
+        $fightProcessor = new FightProcessor($this->fight, $awardService);
         $fightProcessor->process();
     }
 }

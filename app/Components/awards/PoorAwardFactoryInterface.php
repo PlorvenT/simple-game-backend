@@ -17,7 +17,7 @@ use App\Models\Fight;
  * Class PoorAwardFactory
  * @package App\Components\awards
  */
-class PoorAwardFactory implements AwardFactory
+class PoorAwardFactoryInterface implements AwardFactoryInterface
 {
     /**
      * @var Fight

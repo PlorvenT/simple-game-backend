@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace App\Components\fight;
 
-use App\Components\awards\DefaultAwardFactory;
-use App\Components\awards\PoorAwardFactory;
+use App\Components\awards\DefaultAwardFactoryInterface;
+use App\Components\awards\PoorAwardFactoryInterface;
 use App\Models\Fight;
-use App\Components\awards\AwardFactory as AwardFactoryInterface;
+use App\Components\awards\AwardFactoryInterface as AwardFactoryInterface;
 
 /**
  * Class AwardFactory
@@ -25,9 +25,9 @@ class AwardFactory
     public static function make(Fight $fight): AwardFactoryInterface
     {
         if ($fight->hero->user->hasBan()) {
-            return new PoorAwardFactory($fight);
+            return new PoorAwardFactoryInterface($fight);
         }
 
-        return new DefaultAwardFactory($fight);
+        return new DefaultAwardFactoryInterface($fight);
     }
 }
