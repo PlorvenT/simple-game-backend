@@ -5,12 +5,11 @@
  */
 declare(strict_types=1);
 
-namespace App\Rules\hero;
+namespace App\Rules\attackEnemy;
 
-use App\Models\Enemy;
 use Illuminate\Contracts\Validation\Rule;
 
-class EnemyExistRule implements Rule
+class EnemyAvailableRule implements Rule
 {
     /**
      * Determine if the validation rule passes.
@@ -21,9 +20,7 @@ class EnemyExistRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        $hero = Enemy::where(['id' => $value])->first();
-
-        return $hero ? true : false;
+        return true;
     }
 
     /**
@@ -33,6 +30,6 @@ class EnemyExistRule implements Rule
      */
     public function message()
     {
-        return 'No such hero.';
+        return 'Enemy was attack by another user';
     }
 }

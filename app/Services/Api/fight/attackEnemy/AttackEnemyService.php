@@ -7,12 +7,13 @@ declare(strict_types=1);
 
 namespace App\Services\Api\fight\attackEnemy;
 
-use App\Components\experience\ExperienceUpdater;
-use App\Components\fight\FightInterface;
+use App\Jobs\ProcessFight;
 use App\Models\Enemy;
+use App\Models\Fight;
 use App\Models\Hero;
-use App\Rules\hero\EnemyAvailableRule;
-use App\Rules\hero\EnemyExistRule;
+use App\Rules\attackEnemy\EnemyAvailableRule;
+use App\Rules\attackEnemy\EnemyExistRule;
+use App\Rules\attackEnemy\HeroAvailableRule;
 use App\Rules\hero\HeroExistRule;
 use App\Services\ModelService;
 use App\User;
@@ -21,29 +22,13 @@ use Illuminate\Support\Facades\Validator;
 class AttackEnemyService extends ModelService
 {
     /**
-     * @var FightInterface
-     */
-    private $fightService;
-
-    /**
-     * @var ExperienceUpdater
-     */
-    private $experienceUpdater;
-
-    public function __construct(FightInterface $fightService, ExperienceUpdater $experienceUpdater)
-    {
-        $this->fightService = $fightService;
-        $this->experienceUpdater = $experienceUpdater;
-    }
-
-    /**
      * @inheritDoc
      */
     public function run($data)
     {
         /** @var \Illuminate\Contracts\Validation\Validator $validator */
         $validator = Validator::make($data, [
-            'hero_id' => ['required' , 'integer', new HeroExistRule()],
+            'hero_id' => ['required' , 'integer', new HeroExistRule(), new HeroAvailableRule()],
             'enemy_id' => ['required' , 'integer', new EnemyExistRule(), new EnemyAvailableRule()],
         ]);
 
@@ -70,41 +55,33 @@ class AttackEnemyService extends ModelService
      */
     private function getResult(Hero $hero, Enemy $enemy)
     {
-        //TODO: Need refactor, create fight add to queue for run and return fight model.
         /** @var User $user */
         $user = auth()->user();
 
-        $fightResult = $this->fightService
-            ->setFighters($hero, $enemy)
-            ->process()
-            ->processAward();
+        $fight = $this->createFight($hero, $enemy);
+        //add fight to queue
+        ProcessFight::dispatch($fight);
 
-        if ($fightResult->isHeroWin()) {
-            //update hero exp
-            $hero = $this->experienceUpdater->update($hero, $fightResult->getExpAward());
+        $fight->hero;
+        $fight->enemy;
 
-            //update user gold_balance
-            $user->updateBalance($fightResult->getGoldAward());
+        return ['balance' => $user->gold_balance, 'fight' => $fight];
+    }
 
-            return [
-                'win' => true,
-                'receivedGold' => $fightResult->getGoldAward(),
-                'receivedExp' => $fightResult->getExpAward(),
-                'fightTime' => time(),
-                'hero' => $hero,
-                'enemy' => $enemy,
-                'balance' => $user->gold_balance,
-            ];
-        }
+    /**
+     * This method creates fight and add runs it in queue
+     *
+     * @param Hero $hero
+     * @param Enemy $enemy
+     * @return Fight
+     */
+    private function createFight(Hero $hero, Enemy $enemy)
+    {
+        $fight = new Fight();
+        $fight->hero_id = $hero->id;
+        $fight->enemy_id = $enemy->id;
+        $fight->save();
 
-        return [
-            'win' => false,
-            'receivedGold' => 0,
-            'receivedExp' => 0,
-            'fightTime' => time(),
-            'hero' => $hero,
-            'enemy' => $enemy,
-            'balance' => $user->gold_balance,
-        ];
+        return $fight;
     }
 }

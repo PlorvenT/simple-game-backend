@@ -25,8 +25,7 @@ class FightController extends Controller
      */
     public function attackEnemy(Request $request)
     {
-        //TODO: added factory method for creating attack service. Maybe add "ban" column to user?
-        $attackService = new AttackEnemyService(new FightService(), new ExperienceUpdater());
+        $attackService = new AttackEnemyService();
         $result = $attackService->run($request->all());
 
         if (!$result) {

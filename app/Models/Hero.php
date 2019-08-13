@@ -8,7 +8,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Rules\hero\HeroMaxCountRule;
+use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\Rule;
 
 /**
@@ -26,8 +29,9 @@ use Illuminate\Validation\Rule;
  * @property $created_at
  * @property $updated_at
  *
- * @mixin \Eloquent
+ * @property User $user
  *
+ * @mixin \Eloquent
  * @package App\Models
  */
 class Hero extends Model implements UnitInterface
@@ -43,11 +47,19 @@ class Hero extends Model implements UnitInterface
     public const DEFAULT_MAX_HP_HEAL = 80;
     public const DEFAULT_MAX_HP_DD = 50;
 
+    /**
+     * Attack dispersion in percentage.
+     *
+     * @var int
+     */
+    public const ATTACK_DISPERSION = 10;
+
     public const DEFAULT_ATTACK_TANK = 5;
     public const DEFAULT_ATTACK_HEAL = 7;
     public const DEFAULT_ATTACK_DD = 10;
 
     public const GROWTH_HP_BY_LVL = 50;
+    public const GROWTH_ATTACK_BY_LVL = 3;
 
     /**
      * @var array
@@ -78,6 +90,22 @@ class Hero extends Model implements UnitInterface
     protected $fillable = ['name', 'type', 'max_heatpoint', 'lvl', 'attack', 'current_heatpoint', 'experience'];
 
     /**
+     * @return HasMany|Fight[]
+     */
+    public function hero()
+    {
+        return $this->hasMany(Fight::class);
+    }
+
+    /**
+     * @return BelongsTo|User
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * @var array
      *
      * @return array
@@ -96,7 +124,8 @@ class Hero extends Model implements UnitInterface
      */
     public function getAttack(): int
     {
-        return $this->attack;
+        $dispersionCoefficient = 1 + rand(0, self::ATTACK_DISPERSION) / 100;
+        return (int)($this->attack * $dispersionCoefficient);
     }
 
     /**
@@ -133,9 +162,18 @@ class Hero extends Model implements UnitInterface
             return true;
         }
         $this->max_heatpoint = self::$defaultHp[$this->type] + self::GROWTH_HP_BY_LVL * $newLvl;
+        $this->attack = self::$defaultAttack[$this->type] + self::GROWTH_ATTACK_BY_LVL * $newLvl;
         $this->current_heatpoint = $this->max_heatpoint;
         $this->lvl = $newLvl;
 
         return $this->save();
+    }
+
+    /**
+     * @return int
+     */
+    public function geId(): int
+    {
+        return $this->id;
     }
 }

@@ -16,6 +16,11 @@ interface UnitInterface
     /**
      * @return int
      */
+    public function geId(): int;
+
+    /**
+     * @return int
+     */
     public function getAttack(): int;
 
     /**

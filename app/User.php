@@ -73,6 +73,9 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
+    /**
+     * @return string
+     */
     public function generateToken()
     {
         $this->api_token = Str::random(60);
@@ -81,6 +84,10 @@ class User extends Authenticatable
         return $this->api_token;
     }
 
+    /**
+     * @param int $gold
+     * @return bool
+     */
     public function updateBalance(int $gold): bool
     {
         if ($gold <= 0) {
@@ -89,5 +96,10 @@ class User extends Authenticatable
 
         $this->gold_balance += $gold;
         return $this->save();
+    }
+
+    public function hasBan()
+    {
+        return false;
     }
 }

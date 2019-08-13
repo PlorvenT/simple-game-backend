@@ -75,4 +75,12 @@ class Enemy extends Model implements UnitInterface
     {
         return $this->lvl;
     }
+
+    /**
+     * @return int
+     */
+    public function geId(): int
+    {
+        return $this->id;
+    }
 }
